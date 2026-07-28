@@ -1,5 +1,7 @@
 # BVK Tracker (Android)
 
+🔒 Laatste security check: 2026-07-28 23:03 CEST
+
 Android port of [BVK GPX Tracker](https://github.com/EdCafferata/BVK-GpxTracker), a free GPX tracker originally built for the Blocq van Kuffeler (WSV Blocq Kuffeler).
 
 Native Kotlin + Jetpack Compose. This is **Milestone 1** of the Android port — the core tracker. It mirrors the iOS app's map + GPS recording + GPX export, not (yet) the weather/water-level overlays, scale bar, full preferences screen, or Watch companion app. See the project's own scoping notes for the full roadmap.
