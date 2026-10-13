@@ -15,9 +15,23 @@ android {
         versionName = "1.0.0"
     }
 
+    signingConfigs {
+        create("release") {
+            if (project.hasProperty("BVKTRACKER_STORE_FILE")) {
+                storeFile = file(project.findProperty("BVKTRACKER_STORE_FILE") as String)
+                storePassword = project.findProperty("BVKTRACKER_STORE_PASSWORD") as String
+                keyAlias = project.findProperty("BVKTRACKER_KEY_ALIAS") as String
+                keyPassword = project.findProperty("BVKTRACKER_KEY_PASSWORD") as String
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (project.hasProperty("BVKTRACKER_STORE_FILE")) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
