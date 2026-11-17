@@ -1,6 +1,6 @@
 # BVK Tracker (Android)
 
-🔒 Laatste security check: 2026-11-16 21:14 CET
+🔒 Laatste security check: 2026-11-17 08:44 CET
 
 Android port of [BVK GPX Tracker](https://github.com/EdCafferata/BVK-GpxTracker), a free GPX tracker originally built for the Blocq van Kuffeler (WSV Blocq Kuffeler).
 
