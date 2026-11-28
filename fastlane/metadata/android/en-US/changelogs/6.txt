@@ -1,0 +1,6 @@
+• Your ride is safe: a recovery copy is kept while recording, even if Android closes the app.
+• Saving only clears your ride when it succeeded and never overwrites another ride.
+• New: wind (Bft and knots), temperature and Markermeer water level on screen.
+• Info menu: live map on alltrexx.live, rate, support, privacy.
+• Correct ride dates after moving to a new phone.
+• Safer backups and a smaller app.

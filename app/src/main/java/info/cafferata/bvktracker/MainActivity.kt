@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -22,6 +23,9 @@ import info.cafferata.bvktracker.location.TrackingRepository
 import info.cafferata.bvktracker.location.TrackingService
 import info.cafferata.bvktracker.model.GpxFileInfo
 import info.cafferata.bvktracker.store.GpxFileRepository
+import info.cafferata.bvktracker.store.RecoveryStore
+import info.cafferata.bvktracker.weather.WeatherService
+import kotlinx.coroutines.delay
 import info.cafferata.bvktracker.ui.screens.FileListScreen
 import info.cafferata.bvktracker.ui.screens.TrackerScreen
 import info.cafferata.bvktracker.ui.theme.BvkTheme
@@ -44,9 +48,38 @@ class MainActivity : ComponentActivity() {
 private fun BvkApp() {
     val context = androidx.compose.ui.platform.LocalContext.current
     val fileRepo = remember { GpxFileRepository(context) }
+    remember { TrackingRepository.init(context) }
     val state by TrackingRepository.state.collectAsState()
     var showFileList by remember { mutableStateOf(false) }
     var files by remember { mutableStateOf(fileRepo.listFiles()) }
+    var weather by remember { mutableStateOf<WeatherService.Weather?>(null) }
+
+    // Herstelkopie van een rit die werd onderbroken (app afgesloten door Android, crash):
+    // terugzetten als gewoon bestand, zodat er nooit een rit verloren gaat.
+    LaunchedEffect(Unit) {
+        val recovery = RecoveryStore(context)
+        val idle = !state.isTracking && TrackingRepository.session.currentSegment.isEmpty() &&
+            TrackingRepository.session.trackSegments.isEmpty()
+        if (idle && recovery.exists) {
+            val gpx = recovery.read()
+            if (gpx != null) {
+                runCatching { fileRepo.save(gpx, fileRepo.defaultFilename() + "_hersteld") }
+                    .onSuccess { saved ->
+                        recovery.clear()
+                        files = fileRepo.listFiles()
+                        Toast.makeText(context, "Onderbroken rit teruggezet: ${saved.nameWithoutExtension}", Toast.LENGTH_LONG).show()
+                    }
+            }
+        }
+    }
+
+    // Weer en waterstand Markermeer, elke 10 minuten zolang de app open is.
+    LaunchedEffect(Unit) {
+        while (true) {
+            weather = WeatherService.fetch()
+            delay(10 * 60 * 1000L)
+        }
+    }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
         if (granted[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
@@ -77,14 +110,23 @@ private fun BvkApp() {
     } else {
         TrackerScreen(
             state = state,
+            weather = weather,
+            onOpenLink = { url -> openLink(context, url) },
             onToggleTracking = {
                 if (state.isTracking) TrackingRepository.stop() else TrackingRepository.start()
             },
             onSave = {
                 val gpx = TrackingRepository.session.exportToGpxString()
-                fileRepo.save(gpx)
-                TrackingRepository.reset()
-                files = fileRepo.listFiles()
+                // Alleen wissen als het opslaan echt gelukt is (iOS 2.3.0-fix: geen stil dataverlies).
+                runCatching { fileRepo.save(gpx) }
+                    .onSuccess { saved ->
+                        TrackingRepository.reset()
+                        files = fileRepo.listFiles()
+                        Toast.makeText(context, "Opgeslagen: ${saved.nameWithoutExtension}", Toast.LENGTH_SHORT).show()
+                    }
+                    .onFailure {
+                        Toast.makeText(context, "Opslaan mislukt. De rit blijft bewaard; probeer het opnieuw.", Toast.LENGTH_LONG).show()
+                    }
             },
             onOpenFiles = {
                 files = fileRepo.listFiles()
@@ -106,4 +148,9 @@ private fun shareFile(context: android.content.Context, info: GpxFileInfo) {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     context.startActivity(Intent.createChooser(intent, null))
+}
+
+private fun openLink(context: android.content.Context, url: String) {
+    runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+        .onFailure { Toast.makeText(context, url, Toast.LENGTH_LONG).show() }
 }

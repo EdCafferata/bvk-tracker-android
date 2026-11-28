@@ -11,8 +11,8 @@ android {
         applicationId = "info.cafferata.bvktracker"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "1.0.1"
+        versionCode = 6
+        versionName = "1.1.0"
     }
 
     signingConfigs {

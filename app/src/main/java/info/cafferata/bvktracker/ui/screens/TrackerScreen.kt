@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Save
@@ -41,12 +42,15 @@ import info.cafferata.bvktracker.location.TrackingState
 import info.cafferata.bvktracker.ui.map.OsmMapView
 import info.cafferata.bvktracker.ui.map.TileServer
 import info.cafferata.bvktracker.ui.theme.Bvk
+import info.cafferata.bvktracker.weather.WeatherService
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackerScreen(
     state: TrackingState,
+    weather: WeatherService.Weather?,
+    onOpenLink: (String) -> Unit,
     onToggleTracking: () -> Unit,
     onSave: () -> Unit,
     onOpenFiles: () -> Unit,
@@ -55,6 +59,7 @@ fun TrackerScreen(
     var showSeaMarks by remember { mutableStateOf(false) }
     var followUser by remember { mutableStateOf(true) }
     var showLayerMenu by remember { mutableStateOf(false) }
+    var showInfoMenu by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         OsmMapView(
@@ -74,7 +79,18 @@ fun TrackerScreen(
                 .padding(12.dp),
             horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
         ) {
-            RoundIconButton(icon = Icons.Filled.Folder, contentDescription = "Bestanden", onClick = onOpenFiles)
+            Row {
+                RoundIconButton(icon = Icons.Filled.Folder, contentDescription = "Bestanden", onClick = onOpenFiles)
+                Spacer(modifier = Modifier.size(8.dp))
+                Box {
+                    RoundIconButton(icon = Icons.Filled.Info, contentDescription = "Info", onClick = { showInfoMenu = true })
+                    DropdownMenu(expanded = showInfoMenu, onDismissRequest = { showInfoMenu = false }) {
+                        INFO_LINKS.forEach { (label, url) ->
+                            DropdownMenuItem(text = { Text(label) }, onClick = { showInfoMenu = false; onOpenLink(url) })
+                        }
+                    }
+                }
+            }
 
             Row {
                 Box {
@@ -110,6 +126,8 @@ fun TrackerScreen(
                 .navigationBarsPadding()
                 .padding(16.dp),
         ) {
+            WeatherCard(weather)
+            Spacer(modifier = Modifier.size(8.dp))
             StatsCard(state)
             Spacer(modifier = Modifier.size(12.dp))
             Row(
@@ -138,6 +156,38 @@ fun TrackerScreen(
                 }
             }
         }
+    }
+}
+
+/** Links in het info-menu. De site-info-pagina's delen iOS en Android (cafferata.info/bvk-tracker/). */
+private val INFO_LINKS = listOf(
+    "Live kaart (alltrexx.live)" to "https://alltrexx.live/?bron=bvk",
+    "Beoordeel de app" to "https://play.google.com/store/apps/details?id=info.cafferata.bvktracker",
+    "Support" to "https://cafferata.info/bvk-tracker/support.html",
+    "Privacy" to "https://cafferata.info/bvk-tracker/privacy.html",
+)
+
+/** Wind, temperatuur en waterstand Markermeer. Ontbrekende waarden als "—", nooit 0. */
+@Composable
+private fun WeatherCard(weather: WeatherService.Weather?) {
+    val dash = "—"
+    val wind = weather?.windKn?.let { kn ->
+        val arrow = weather.windDirection?.let { WeatherService.windArrow(it) + " " } ?: ""
+        val gust = weather.gustKn?.let { " (%.0f)".format(it) } ?: ""
+        "${arrow}Bft ${WeatherService.beaufort(kn)} · %.0f$gust kn".format(kn)
+    } ?: dash
+    val temp = weather?.temperature?.let { "%.0f °C".format(it) } ?: dash
+    val water = weather?.waterLevelCm?.let { "%+.0f cm NAP".format(it) } ?: dash
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+    ) {
+        StatItem(label = "WIND", value = wind)
+        StatItem(label = "TEMP", value = temp)
+        StatItem(label = "WATERSTAND", value = water)
     }
 }
 

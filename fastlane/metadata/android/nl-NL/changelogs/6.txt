@@ -1,0 +1,6 @@
+• Je rit is veilig: tijdens het opnemen wordt een herstelkopie bewaard, ook als Android de app afsluit.
+• Opslaan wist je rit alleen als het gelukt is en overschrijft nooit een andere rit.
+• Nieuw: wind (Bft en knopen), temperatuur en waterstand Markermeer in beeld.
+• Info-menu: live kaart op alltrexx.live, beoordelen, support, privacy.
+• Juiste ritdatum na overzetten naar een nieuw toestel.
+• Veiligere back-ups en een kleinere app.

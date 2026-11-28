@@ -35,6 +35,7 @@ class TrackingService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        TrackingRepository.init(this)
         startForeground(NOTIFICATION_ID, buildNotification())
         startLocationUpdates()
         return START_STICKY

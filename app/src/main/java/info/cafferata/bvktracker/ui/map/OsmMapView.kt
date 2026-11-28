@@ -100,9 +100,10 @@ fun OsmMapView(
         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
 
         // Eigen zoom +/- knoppen (vervangt osmdroid's crashende ingebouwde knoppen)
+        // Rechts in het midden: onderin liggen de weer-/afstandkaarten en de startknop eroverheen.
         Column(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(Alignment.CenterEnd)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
