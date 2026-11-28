@@ -15,10 +15,10 @@ Wind (Beaufort en knopen), temperatuur en de actuele waterstand van het Markerme
 📤 EXPORTEREN EN DELEN
 Elke opgenomen track wordt opgeslagen als .gpx-bestand, klaar om te delen of te importeren in andere navigatie-apps.
 
-🌐 LIVE KAART
-Via het info-menu open je de BVK-weergave op alltrexx.live.
+🌐 LIVE MEEVAREN (OPTIONEEL)
+Zet je het zelf aan, dan verschijnt je boot live op de BVK-kaart van alltrexx.live: koppel met de naam van je boot en je positie wordt ongeveer elke 15 seconden gedeeld. Uitzetten of ontkoppelen stopt het direct. Staat het uit, dan wordt er niets verstuurd.
 
 💶 GRATIS
 Geen abonnement, geen betaalmuur, geen account nodig.
 
-Alles blijft op je eigen toestel — er is geen eigen server en geen tracking van jou als gebruiker. Het weer wordt opgevraagd voor een vast punt op het Markermeer, niet voor jouw locatie.
+Je ritten blijven op je eigen toestel. Geen account en geen tracking van jou als gebruiker; alleen als je live meevaren zelf aanzet, gaan bootnaam en positie naar alltrexx.live. Het weer wordt opgevraagd voor een vast punt op het Markermeer, niet voor jouw locatie.

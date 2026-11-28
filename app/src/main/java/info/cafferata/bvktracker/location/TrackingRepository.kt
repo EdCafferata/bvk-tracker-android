@@ -3,6 +3,7 @@ package info.cafferata.bvktracker.location
 import android.content.Context
 import android.location.Location
 import android.os.SystemClock
+import info.cafferata.bvktracker.alltrexx.AlltrexxKoppeling
 import info.cafferata.bvktracker.gpx.GpxPoint
 import info.cafferata.bvktracker.gpx.GpxSession
 import info.cafferata.bvktracker.store.RecoveryStore
@@ -32,6 +33,7 @@ object TrackingRepository {
     /** Called from the Activity and the Service; safe to call more than once. */
     fun init(context: Context) {
         if (recovery == null) recovery = RecoveryStore(context.applicationContext)
+        AlltrexxKoppeling.init(context)
     }
 
     fun start() {
@@ -48,6 +50,8 @@ object TrackingRepository {
      * additionally records the point into the session while tracking is on. */
     fun onLocation(location: Location) {
         val point = GpxPoint(location.latitude, location.longitude, location.altitude)
+        // Live meevaren (alleen als de gebruiker het aanzette); net als iOS los van het opnemen.
+        AlltrexxKoppeling.nieuwePositie(location)
         if (_state.value.isTracking) {
             session.addPointToCurrentSegment(location)
             val now = SystemClock.elapsedRealtime()

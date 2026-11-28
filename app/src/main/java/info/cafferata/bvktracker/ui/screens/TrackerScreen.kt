@@ -29,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import info.cafferata.bvktracker.alltrexx.AlltrexxKoppeling
 import info.cafferata.bvktracker.location.TrackingState
 import info.cafferata.bvktracker.ui.map.OsmMapView
 import info.cafferata.bvktracker.ui.map.TileServer
@@ -60,6 +62,8 @@ fun TrackerScreen(
     var followUser by remember { mutableStateOf(true) }
     var showLayerMenu by remember { mutableStateOf(false) }
     var showInfoMenu by remember { mutableStateOf(false) }
+    var showAlltrexx by remember { mutableStateOf(false) }
+    val live by AlltrexxKoppeling.status.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         OsmMapView(
@@ -85,6 +89,10 @@ fun TrackerScreen(
                 Box {
                     RoundIconButton(icon = Icons.Filled.Info, contentDescription = "Info", onClick = { showInfoMenu = true })
                     DropdownMenu(expanded = showInfoMenu, onDismissRequest = { showInfoMenu = false }) {
+                        DropdownMenuItem(
+                            text = { Text(if (live.actief) "Live delen op Alltrexx.live (aan)" else "Live delen op Alltrexx.live") },
+                            onClick = { showInfoMenu = false; showAlltrexx = true },
+                        )
                         INFO_LINKS.forEach { (label, url) ->
                             DropdownMenuItem(text = { Text(label) }, onClick = { showInfoMenu = false; onOpenLink(url) })
                         }
@@ -126,6 +134,18 @@ fun TrackerScreen(
                 .navigationBarsPadding()
                 .padding(16.dp),
         ) {
+            if (live.actief) {
+                Text(
+                    "● LIVE op alltrexx.live als ${live.naam ?: "—"}",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    modifier = Modifier
+                        .background(Bvk.red, RoundedCornerShape(12.dp))
+                        .clickable { showAlltrexx = true }
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                )
+                Spacer(modifier = Modifier.size(8.dp))
+            }
             WeatherCard(weather)
             Spacer(modifier = Modifier.size(8.dp))
             StatsCard(state)
@@ -157,11 +177,17 @@ fun TrackerScreen(
             }
         }
     }
+    if (showAlltrexx) {
+        AlltrexxDialog(
+            onOpenLiveMap = { onOpenLink(AlltrexxKoppeling.LIVE_KAART_URL) },
+            onDismiss = { showAlltrexx = false },
+        )
+    }
 }
 
 /** Links in het info-menu. De site-info-pagina's delen iOS en Android (cafferata.info/bvk-tracker/). */
 private val INFO_LINKS = listOf(
-    "Live kaart (alltrexx.live)" to "https://alltrexx.live/?bron=bvk",
+    "Live kaart (alltrexx.live)" to AlltrexxKoppeling.LIVE_KAART_URL,
     "Beoordeel de app" to "https://play.google.com/store/apps/details?id=info.cafferata.bvktracker",
     "Support" to "https://cafferata.info/bvk-tracker/support.html",
     "Privacy" to "https://cafferata.info/bvk-tracker/privacy.html",
