@@ -1,15 +1,24 @@
 BVK Tracker is een gratis GPX-tracker, oorspronkelijk gemaakt voor de Blocq van Kuffeler (WSV Blocq Kuffeler) — handig voor iedereen die zijn route wil vastleggen op het water of onderweg.
 
-🗺️ MEERDERE KAARTLAGEN
-Kies uit OpenStreetMap, Carto DB, OpenTopoMap en Carto DB Dark Matter, met optioneel OpenSeaMap-vaarwegmarkeringen erbovenop.
+🗺️ KAARTLAGEN
+Kies uit OpenStreetMap, Wegenkaart (Esri) en OpenTopoMap, met optioneel OpenSeaMap-vaarwegmarkeringen erbovenop.
 
 📍 LIVE GPS-TRACKING
 Start/stop je track met één druk op de knop, zie live afstand en snelheid, en sla je route op als standaard GPX-bestand.
 
+🛟 JE RIT GAAT NIET VERLOREN
+Tijdens het opnemen bewaart de app een herstelkopie. Sluit Android de app af, dan staat je rit bij de volgende start gewoon in je lijst. Opslaan overschrijft nooit een andere rit.
+
+🌬️ WEER EN WATERSTAND
+Wind (Beaufort en knopen), temperatuur en de actuele waterstand van het Markermeer (Rijkswaterstaat) direct in beeld.
+
 📤 EXPORTEREN EN DELEN
 Elke opgenomen track wordt opgeslagen als .gpx-bestand, klaar om te delen of te importeren in andere navigatie-apps.
+
+🌐 LIVE KAART
+Via het info-menu open je de BVK-weergave op alltrexx.live.
 
 💶 GRATIS
 Geen abonnement, geen betaalmuur, geen account nodig.
 
-Alles blijft op je eigen toestel — er is geen eigen server en geen tracking van jou als gebruiker.
+Alles blijft op je eigen toestel — er is geen eigen server en geen tracking van jou als gebruiker. Het weer wordt opgevraagd voor een vast punt op het Markermeer, niet voor jouw locatie.
